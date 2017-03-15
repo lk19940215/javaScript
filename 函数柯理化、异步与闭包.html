@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>函数柯理化、异步与闭包</title>
+</head>
+
+<body>
+	
+	<script>
+		function add(num1,num2){
+			console.log(arguments)
+			return num1 + num2;
+		}
+		
+		add(10,20)
+
+		function add(args){
+			var _args = [].slice.call(arguments);
+			var adder = function(){
+				var _adder = function(){
+					[].push.apply(_args, [].slice.call(arguments));
+					return _adder;
+				}
+				
+				_adder.toString = function(){
+					return _args.reduce(function(a,b){
+						return a + b;
+					});
+				}
+				return _adder;
+			};
+			return adder.apply(null, [].slice.call(arguments));
+		}
+		console.log(add(1)(2,3,5,6,8));
+		console.log(add(1,2,3)(4));
+		console.log(add(1)(2)(3)(4)(5));
+
+		var a = 20;
+		function foo() {
+			var a = 1;
+			var obj = {
+				a:10,
+				c:this.a,
+				fn:function(){
+					return this.a;
+				}
+			}
+			return obj.c;
+		}
+		console.log( {}.toString.call(foo));
+		var n = 80;
+		function fn(){
+			console.log(this.n);
+		}
+		fn();
+		var a = 20;
+		var obj = {
+			a:10,
+			c:this.a,
+			fn:function(){
+				return this.a;
+			}
+		}
+		
+		setTimeout(function(){
+			console.log(a);
+		},0);
+		var a = 10;
+		console.log(b);
+		console.log(fn);
+		var b = 20;
+		function fn(){
+			setTimeout(function () {
+				console.log("setTimeout 10ms.");
+			},10);
+		}
+		fn.toString = function(){
+			return 30;
+		}
+		console.log(fn);
+		setTimeout(function() {
+			console.log("setTimeout 20ms.");
+		},20);
+		fn();
+	</script>
+</body>
+
+</html>
